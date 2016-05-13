@@ -3,19 +3,19 @@
    Haverá vários alunos cadastrados
 */
 
-// 1º: Cadastrar os alunos em um vetor de structs (Máximo 35)
+// 1º: Cadastrar os alunos em um vetor de structs (Máximo 35) (OK)
 //      Nome, RA, faltas, P1, P2, P3 (opcional), trabalho e exame (OK)
 //	    Cadastrar 1 aluno (OK)
 //      Cadastrar n alunos (OK)
-// 2º: Calcular média parcial
-//	    (P1+P2)*0.45 + T*0.1 ou (P1+P2+P3)*0.3 + T*0.1
+// 2º: Calcular média parcial (OK)
+//	    ((P1+P2)/2)*9/10 + T*1/10 ou ((P1+P2+P3)/3)*9/10 + T*1/10 (OK)
 // 3º: Verificar Exame
 //	    Média < 2.5 (Reprovação)
 //	    2.5 <= Média <= 5.9 (Exame)
 //	    Média >= 6 (Aprovação)
 // 4º: Calcular nota final
 //	    Nota = Média parcial
-//	    Ou Nota = (Média Parcial*2 + Exame*1)/3
+//	    Ou Nota = Média Parcial*2/3 + Exame*1/3
 //		Nota >= 5 (Aprovação)
 // 5º: Avaliar faltas
 //	    4 ou menos faltas (Aprovação)
@@ -43,6 +43,7 @@ Pessoa alunos[35];
 // Funções utilizadas
 void cadastrarAluno(Pessoa x[], int i);
 // Teste: void mostrarAlunos (Pessoa x[], int i);
+void calcularMediaParcial(Pessoa x[], int i);
 
 int main(){
     int n, cont;
@@ -60,6 +61,7 @@ int main(){
     // Cadastrar n alunos
     for(cont = 0; cont < n; cont++){
             cadastrarAluno(alunos,cont);
+            calcularMediaParcial(alunos, cont);
     }
 
     /* Teste
@@ -136,4 +138,21 @@ void mostrarAlunos (Pessoa x[], int i){
     printf("\nNota da P3: %.2f", x[i].p3);
     printf("\nNota do trabalho: %.2f", x[i].trabalho);
     printf("\nFaltas: %d\n", x[i].faltas);
+}
+
+// Função que calcula a média parcial do aluno
+void calcularMediaParcial(Pessoa x[], int i){
+    float mediaparcial=0;
+
+    if(x[i].p3 != -1){ // O aluno fez a P3
+        mediaparcial=(((x[i].p1)+(x[i].p2)+(x[i].p3))/3)*9/10; // A media das provas representa 90% da media parcial
+        mediaparcial+=(x[i].trabalho*1/10); // O trabalho representa 10% da media parcial
+        printf("\nMedia parcial do aluno %d (posicao %d), que fez a P3: %.2f\n", i+1, i, mediaparcial);
+    }
+
+    else{ // O aluno nao fez a P3
+        mediaparcial=(((x[i].p1)+(x[i].p2))/2)*9/10; // A media das provas representa 90% da media parcial
+        mediaparcial+=(x[i].trabalho*1/10); // O trabalho representa 10% da media parcial
+        printf("\nMedia parcial do aluno %d (posicao %d), que NAO fez a P3: %.2f\n", i+1, i, mediaparcial);
+    }
 }
