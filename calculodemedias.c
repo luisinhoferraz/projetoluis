@@ -9,14 +9,14 @@
 //      Cadastrar n alunos (OK)
 // 2º: Calcular média parcial (OK)
 //	    ((P1+P2)/2)*9/10 + T*1/10 ou ((P1+P2+P3)/3)*9/10 + T*1/10 (OK)
-// 3º: Verificar Exame
-//	    Média < 2.5 (Reprovação)
-//	    2.5 <= Média <= 5.9 (Exame)
-//	    Média >= 6 (Aprovação)
-// 4º: Calcular nota final
-//	    Nota = Média parcial
-//	    Ou Nota = Média Parcial*2/3 + Exame*1/3
-//		Nota >= 5 (Aprovação)
+// 3º: Verificar Exame (OK)
+//	    Média < 2.5 (Reprovação) (OK)
+//	    2.5 <= Média <= 5.9 (Exame) (OK)
+//	    Média >= 6 (Aprovação) (OK)
+// 4º: Calcular nota final (OK)
+//	    Nota = Média parcial (OK)
+//	    Ou Nota = Média Parcial*2/3 + Exame*1/3 (OK)
+//		Nota >= 5 (Aprovação) (OK)
 // 5º: Avaliar faltas
 //	    4 ou menos faltas (Aprovação)
 //	    Mais que 4 faltas (Reprovação por falta)
@@ -35,6 +35,7 @@ typedef struct pessoa {
 	char nome[100];
 	int ra, faltas;
 	float p1, p2, p3, trabalho, exame;
+	float mediaparcial, mediafinal;
 } Pessoa;
 
 // Serão cadastrados no máximo 35 alunos
@@ -44,6 +45,7 @@ Pessoa alunos[35];
 void cadastrarAluno(Pessoa x[], int i);
 // Teste: void mostrarAlunos (Pessoa x[], int i);
 void calcularMediaParcial(Pessoa x[], int i);
+void verificarExame(Pessoa x[], int i);
 
 int main(){
     int n, cont;
@@ -62,6 +64,7 @@ int main(){
     for(cont = 0; cont < n; cont++){
             cadastrarAluno(alunos,cont);
             calcularMediaParcial(alunos, cont);
+            verificarExame(alunos, cont);
     }
 
     /* Teste
@@ -142,17 +145,45 @@ void mostrarAlunos (Pessoa x[], int i){
 
 // Função que calcula a média parcial do aluno
 void calcularMediaParcial(Pessoa x[], int i){
-    float mediaparcial=0;
-
     if(x[i].p3 != -1){ // O aluno fez a P3
-        mediaparcial=(((x[i].p1)+(x[i].p2)+(x[i].p3))/3)*9/10; // A media das provas representa 90% da media parcial
-        mediaparcial+=(x[i].trabalho*1/10); // O trabalho representa 10% da media parcial
-        printf("\nMedia parcial do aluno %d (posicao %d), que fez a P3: %.2f\n", i+1, i, mediaparcial);
+        x[i].mediaparcial=(((x[i].p1)+(x[i].p2)+(x[i].p3))/3)*9/10; // A media das provas representa 90% da media parcial
+        x[i].mediaparcial+=(x[i].trabalho*1/10); // O trabalho representa 10% da media parcial
+        printf("\nMedia parcial do aluno %d (posicao %d), que fez a P3: %.2f\n", i+1, i, x[i].mediaparcial);
     }
 
     else{ // O aluno nao fez a P3
-        mediaparcial=(((x[i].p1)+(x[i].p2))/2)*9/10; // A media das provas representa 90% da media parcial
-        mediaparcial+=(x[i].trabalho*1/10); // O trabalho representa 10% da media parcial
-        printf("\nMedia parcial do aluno %d (posicao %d), que NAO fez a P3: %.2f\n", i+1, i, mediaparcial);
+        x[i].mediaparcial=(((x[i].p1)+(x[i].p2))/2)*9/10; // A media das provas representa 90% da media parcial
+        x[i].mediaparcial+=(x[i].trabalho*1/10); // O trabalho representa 10% da media parcial
+        printf("\nMedia parcial do aluno %d (posicao %d), que NAO fez a P3: %.2f\n", i+1, i, x[i].mediaparcial);
+    }
+}
+
+// Função que verifica se o aluno precisa de exame
+void verificarExame(Pessoa x[], int i){
+    if(x[i].mediaparcial >= 6.0){
+            x[i].mediafinal=x[i].mediaparcial; // O aluno foi aprovado por nota
+            x[i].exame=-1;
+            // printf("\nexame: %.2f\n", x[i].exame);
+            // printf("\nmedia parcial: %.2f\n", x[i].mediaparcial);
+            printf("\nmedia final: %.2f\n", x[i].mediafinal);
+    }
+    else {
+        if(x[i].mediaparcial < 2.5){
+            x[i].mediafinal=x[i].mediaparcial; // O aluno foi reprovado por nota
+            x[i].exame=-1;
+            // printf("\nexame: %.2f\n", x[i].exame);
+            // printf("\nmedia parcial: %.2f\n", x[i].mediaparcial);
+            printf("\nmedia final: %.2f\n", x[i].mediafinal);
+        }
+
+        else{
+            printf("\nDigite a nota do aluno no exame: ");
+            scanf("%f", &x[i].exame);
+            getchar();
+            // printf("\nexame: %.2f\n", x[i].exame);
+            // printf("\nmedia parcial: %.2f\n", x[i].mediaparcial);
+            x[i].mediafinal=(x[i].mediaparcial*2 + x[i].exame*1)/3;
+            printf("\nMedia final do aluno %d (posicao %d): %.2f\n", i+1, i, x[i].mediafinal);
+        }
     }
 }
