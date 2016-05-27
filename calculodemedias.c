@@ -17,9 +17,9 @@
 //	    Nota = Média parcial (OK)
 //	    Ou Nota = Média Parcial*2/3 + Exame*1/3 (OK)
 //		Nota >= 5 (Aprovação) (OK)
-// 5º: Avaliar faltas
-//	    4 ou menos faltas (Aprovação)
-//	    Mais que 4 faltas (Reprovação por falta)
+// 5º: Avaliar faltas (OK)
+//	    4 ou menos faltas (Aprovação) (OK)
+//	    Mais que 4 faltas (Reprovação por falta) (OK)
 // 6º: Exibir aprovação/reprovação
 // 7º: Opção de relatório de aprovações (Requisito inconsciente)
 //	    Alunos aprovados
@@ -43,9 +43,9 @@ Pessoa alunos[35];
 
 // Funções utilizadas
 void cadastrarAluno(Pessoa x[], int i);
-// Teste: void mostrarAlunos (Pessoa x[], int i);
 void calcularMediaParcial(Pessoa x[], int i);
 void verificarExame(Pessoa x[], int i);
+void verificarFaltas(Pessoa x[], int i);
 
 int main(){
     int n, cont;
@@ -65,13 +65,8 @@ int main(){
             cadastrarAluno(alunos,cont);
             calcularMediaParcial(alunos, cont);
             verificarExame(alunos, cont);
+            verificarFaltas(alunos, cont);
     }
-
-    /* Teste
-    for(cont = 0; cont < n; cont++){
-            mostrarAlunos(alunos,cont);
-    }
-    */
 
 	return 0;
 }
@@ -85,22 +80,18 @@ void cadastrarAluno(Pessoa x[], int i){
     printf("\nNome do aluno: "); // Receber nome do aluno
     fgets(x[i].nome, 100, stdin);
     getchar();
-    // Teste: printf("\n%s\n", x[i].nome);
 
     printf("\nRA: "); // Receber RA
     scanf("%d", &x[i].ra);
     getchar();
-    // Teste: printf("\n%d\n", x[i].ra);
 
     printf("\nNota da P1: "); // Receber nota da P1
     scanf("%f", &x[i].p1);
     getchar();
-    // Teste: printf("\n%.2f\n", x[i].p1);
 
     printf("\nNota da P2: "); // Receber nota da P2
     scanf("%f", &x[i].p2);
     getchar();
-    // Teste: printf("\n%.2f\n", x[i].p2);
 
     printf("\nO aluno fez a P3? (1 para sim, 0 para nao) "); // A P3 é opcional
     scanf("%d", &teste);
@@ -110,37 +101,21 @@ void cadastrarAluno(Pessoa x[], int i){
         printf("\nNota da P3: "); // Receber nota da P3
         scanf("%f", &x[i].p3);
         getchar();
-        // Teste: printf("\n%.2f\n", x[i].p3);
         printf("\n");
     }
 
     else { // O aluno não fez a P3
         x[i].p3 = -1; // Nota negativa para cálculo de média sem P3
-        // Teste: printf("\n%.0f\n", x[i].p3);
     }
 
     printf("\nNota do trabalho: "); // Receber nota do trabalho
     scanf("%f", &x[i].trabalho);
     getchar();
-    // Teste: printf("\n%.2f\n", x[i].trabalho);
 
     printf("\nNumero de faltas: "); // Receber número de faltas
     scanf("%d", &x[i].faltas);
     getchar();
-    // Teste: printf("\n%d\n", x[i].faltas);
     printf("\n");
-}
-
-// Função que imprime todos os dados do aluno (será excluida posteriormente)
-void mostrarAlunos (Pessoa x[], int i){
-    printf("\n=== Aluno %d (posicao %d) ===", i+1, i);
-    printf("\nNome: %s", x[i].nome);
-    printf("\nRA: %d", x[i].ra);
-    printf("\nNota da P1: %.2f", x[i].p1);
-    printf("\nNota da P2: %.2f", x[i].p2);
-    printf("\nNota da P3: %.2f", x[i].p3);
-    printf("\nNota do trabalho: %.2f", x[i].trabalho);
-    printf("\nFaltas: %d\n", x[i].faltas);
 }
 
 // Função que calcula a média parcial do aluno
@@ -163,16 +138,12 @@ void verificarExame(Pessoa x[], int i){
     if(x[i].mediaparcial >= 6.0){
             x[i].mediafinal=x[i].mediaparcial; // O aluno foi aprovado por nota
             x[i].exame=-1;
-            // printf("\nexame: %.2f\n", x[i].exame);
-            // printf("\nmedia parcial: %.2f\n", x[i].mediaparcial);
             printf("\nmedia final: %.2f\n", x[i].mediafinal);
     }
-    else {
+    else{
         if(x[i].mediaparcial < 2.5){
             x[i].mediafinal=x[i].mediaparcial; // O aluno foi reprovado por nota
             x[i].exame=-1;
-            // printf("\nexame: %.2f\n", x[i].exame);
-            // printf("\nmedia parcial: %.2f\n", x[i].mediaparcial);
             printf("\nmedia final: %.2f\n", x[i].mediafinal);
         }
 
@@ -180,10 +151,18 @@ void verificarExame(Pessoa x[], int i){
             printf("\nDigite a nota do aluno no exame: ");
             scanf("%f", &x[i].exame);
             getchar();
-            // printf("\nexame: %.2f\n", x[i].exame);
-            // printf("\nmedia parcial: %.2f\n", x[i].mediaparcial);
             x[i].mediafinal=(x[i].mediaparcial*2 + x[i].exame*1)/3;
             printf("\nMedia final do aluno %d (posicao %d): %.2f\n", i+1, i, x[i].mediafinal);
         }
+    }
+}
+
+// Função que verifica a quantidade de faltas do alunos
+void verificarFaltas(Pessoa x[], int i){
+    if(x[i].faltas <= 4){
+        printf("\nO aluno foi aprovado por presença.\n");
+    }
+    else{
+        printf("\nO aluno foi reprovado por falta.\n");
     }
 }
