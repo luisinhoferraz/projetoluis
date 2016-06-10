@@ -20,11 +20,10 @@
 // 5º: Avaliar faltas (OK)
 //	    4 ou menos faltas (Aprovação) (OK)
 //	    Mais que 4 faltas (Reprovação por falta) (OK)
-// 6º: Exibir aprovação/reprovação
+// 6º: Exibir aprovação/reprovação (OK)
 // 7º: Opção de relatório de aprovações (Requisito inconsciente)
 //	    Alunos aprovados
 //	    Alunos reprovados
-//	    Total de alunos
 //	    Taxas de aprovação e de reprovação
 
 #include <stdio.h>
@@ -33,7 +32,7 @@
 // Dados de cada aluno do tipo Pessoa
 typedef struct pessoa {
 	char nome[100];
-	int ra, faltas;
+	int ra, faltas, apnota, appresenca;
 	float p1, p2, p3, trabalho, exame;
 	float mediaparcial, mediafinal;
 } Pessoa;
@@ -46,6 +45,7 @@ void cadastrarAluno(Pessoa x[], int i);
 void calcularMediaParcial(Pessoa x[], int i);
 void verificarExame(Pessoa x[], int i);
 void verificarFaltas(Pessoa x[], int i);
+void resultadoFinal(Pessoa x[], int i);
 
 int main(){
     int n, cont;
@@ -62,10 +62,11 @@ int main(){
 
     // Cadastrar n alunos
     for(cont = 0; cont < n; cont++){
-            cadastrarAluno(alunos,cont);
-            calcularMediaParcial(alunos, cont);
-            verificarExame(alunos, cont);
-            verificarFaltas(alunos, cont);
+        cadastrarAluno(alunos,cont);
+        calcularMediaParcial(alunos, cont);
+        verificarExame(alunos, cont);
+        verificarFaltas(alunos, cont);
+        resultadoFinal(alunos, cont);
     }
 
 	return 0;
@@ -75,7 +76,7 @@ int main(){
 void cadastrarAluno(Pessoa x[], int i){
     int teste;
 
-    printf("\n=== CADASTRO DO ALUNO %d ===", i+1);
+    printf("\nCALCULO DE MEDIA DO ALUNO %d ============================\n", i+1);
 
     printf("\nNome do aluno: "); // Receber nome do aluno
     fgets(x[i].nome, 100, stdin);
@@ -85,16 +86,16 @@ void cadastrarAluno(Pessoa x[], int i){
     scanf("%d", &x[i].ra);
     getchar();
 
+    printf("\nO aluno fez a P3? (1 para sim, 0 para nao) "); // A P3 é opcional
+    scanf("%d", &teste);
+    getchar();
+
     printf("\nNota da P1: "); // Receber nota da P1
     scanf("%f", &x[i].p1);
     getchar();
 
     printf("\nNota da P2: "); // Receber nota da P2
     scanf("%f", &x[i].p2);
-    getchar();
-
-    printf("\nO aluno fez a P3? (1 para sim, 0 para nao) "); // A P3 é opcional
-    scanf("%d", &teste);
     getchar();
 
     if (teste == 1){ // O aluno fez a P3
@@ -123,28 +124,26 @@ void calcularMediaParcial(Pessoa x[], int i){
     if(x[i].p3 != -1){ // O aluno fez a P3
         x[i].mediaparcial=(((x[i].p1)+(x[i].p2)+(x[i].p3))/3)*9/10; // A media das provas representa 90% da media parcial
         x[i].mediaparcial+=(x[i].trabalho*1/10); // O trabalho representa 10% da media parcial
-        printf("\nMedia parcial do aluno %d (posicao %d), que fez a P3: %.2f\n", i+1, i, x[i].mediaparcial);
     }
 
     else{ // O aluno nao fez a P3
         x[i].mediaparcial=(((x[i].p1)+(x[i].p2))/2)*9/10; // A media das provas representa 90% da media parcial
         x[i].mediaparcial+=(x[i].trabalho*1/10); // O trabalho representa 10% da media parcial
-        printf("\nMedia parcial do aluno %d (posicao %d), que NAO fez a P3: %.2f\n", i+1, i, x[i].mediaparcial);
     }
 }
 
 // Função que verifica se o aluno precisa de exame
 void verificarExame(Pessoa x[], int i){
     if(x[i].mediaparcial >= 6.0){
-            x[i].mediafinal=x[i].mediaparcial; // O aluno foi aprovado por nota
-            x[i].exame=-1;
-            printf("\nmedia final: %.2f\n", x[i].mediafinal);
+            x[i].mediafinal=x[i].mediaparcial;
+            x[i].apnota=1; // O aluno foi aprovado por nota
+            printf("\nMedia final do aluno %d: %.2f\n", i+1, x[i].mediafinal);
     }
     else{
         if(x[i].mediaparcial < 2.5){
-            x[i].mediafinal=x[i].mediaparcial; // O aluno foi reprovado por nota
-            x[i].exame=-1;
-            printf("\nmedia final: %.2f\n", x[i].mediafinal);
+            x[i].mediafinal=x[i].mediaparcial;
+            x[i].apnota=0; // O aluno foi reprovado por nota
+            printf("\nMedia final do aluno %d: %.2f\n", i+1, x[i].mediafinal);
         }
 
         else{
@@ -152,7 +151,13 @@ void verificarExame(Pessoa x[], int i){
             scanf("%f", &x[i].exame);
             getchar();
             x[i].mediafinal=(x[i].mediaparcial*2 + x[i].exame*1)/3;
-            printf("\nMedia final do aluno %d (posicao %d): %.2f\n", i+1, i, x[i].mediafinal);
+            if(x[i].mediafinal>=5){
+                x[i].apnota=1; // O aluno foi aprovado por nota
+            }
+            else{
+                x[i].apnota=0; // O aluno foi reprovado por nota
+            }
+            printf("\nMedia final do aluno %d: %.2f\n", i+1, x[i].mediafinal);
         }
     }
 }
@@ -160,9 +165,24 @@ void verificarExame(Pessoa x[], int i){
 // Função que verifica a quantidade de faltas do alunos
 void verificarFaltas(Pessoa x[], int i){
     if(x[i].faltas <= 4){
-        printf("\nO aluno foi aprovado por presença.\n");
+        x[i].appresenca=1; // O aluno foi aprovado por presenca
     }
     else{
-        printf("\nO aluno foi reprovado por falta.\n");
+        x[i].appresenca=0; // O aluno foi reprovado por falta
+    }
+}
+
+// Função que exibe o resultado final do aluno
+void resultadoFinal(Pessoa x[], int i){
+    if((x[i].apnota==1)&&(x[i].appresenca==1)) {
+        printf("\n\nRESULTADO FINAL: O aluno foi aprovado por nota e por presenca.\n");
+    }
+    else{
+        if(x[i].apnota==0){
+            printf("\n\nRESULTADO FINAL: O aluno foi reprovado por nota.\n");
+        }
+        if(x[i].appresenca==0){
+            printf("\n\nRESULTADO FINAL: O aluno foi reprovado por falta.\n");
+        }
     }
 }
