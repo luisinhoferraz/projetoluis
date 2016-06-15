@@ -64,6 +64,8 @@ int main(){
         gerarRelatorio(i);
     }
 
+    getchar();
+
 	return 0;
 }
 
